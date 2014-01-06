@@ -1,5 +1,13 @@
 module Metaforce
   class Login
+
+    # Proc to call to reauthenticate.
+    # @return [Proc]
+    def self.authentication_handler
+      @authentication_handler ||=
+          lambda { |_, options| Metaforce.login(options) }
+    end
+
     def initialize(username, password, security_token=nil)
       @username, @password, @security_token = username, password, security_token
     end
@@ -14,7 +22,7 @@ module Metaforce
           :password => password
         }
       end
-      response.body[:login_response][:result]
+      response.body[:loginResponse][:result]
     end
 
   private

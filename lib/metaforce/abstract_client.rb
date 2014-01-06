@@ -52,7 +52,8 @@ module Metaforce
 
     def perform_request(*args, &block)
       response = client.request(*args, &block)
-      Hashie::Mash.new(response.body)[:"#{args[0]}_response"].result
+      Hashie::Mash.new(response.body).
+          send(:"#{args[0].to_s.camelize(:lower)}Response").result
     end
 
     # Internal Calls the authentication handler, which should set @options to a new
@@ -63,9 +64,19 @@ module Metaforce
       client.config.soap_header = soap_headers
     end
 
+    # Used to determine if the client is using username/password vs. OAuth 2.
+    # @return [Boolean]
+    def username_password?
+      @options[:username] && @options[:password]
+    end
+
     # A proc object that gets called when the client needs to reauthenticate.
     def authentication_handler
-      Metaforce.configuration.authentication_handler
+      if username_password?
+        Metaforce::Login.authentication_handler
+      else
+        Metaforce::Refresh.authentication_handler
+      end
     end
 
     def authentication_retries

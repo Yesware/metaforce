@@ -3,15 +3,17 @@ require 'spec_helper'
 describe Metaforce::Job::Deploy do
   let(:client) { double('metadata client') }
   let(:path) { File.expand_path('../../../fixtures/payload.zip', __FILE__) }
-  let(:job) { described_class.new client, path }
+  let(:job) { described_class.new(client, path) }
 
   describe '.perform' do
     subject { job.perform }
 
     context 'when the path is a file' do
       before do
-        client.should_receive(:_deploy).with(/^UEsDBA.*/, {}).and_return(Hashie::Mash.new(id: '1234'))
-        client.should_receive(:status).any_number_of_times.and_return(Hashie::Mash.new(done: true, state: 'Completed'))
+        client.should_receive(:_deploy).
+            with(/^UEsDBA.*/, {}).and_return(Hashie::Mash.new(id: '1234'))
+        client.stub(:status).
+            and_return(Hashie::Mash.new(done: true, state: 'Completed'))
       end
 
       it { should eq job }
@@ -20,8 +22,11 @@ describe Metaforce::Job::Deploy do
 
     context 'when the path is a directory' do
       before do
-        client.should_receive(:_deploy).with(/.*1stwAAAJI.*/, {}).and_return(Hashie::Mash.new(id: '1234'))
-        client.should_receive(:status).any_number_of_times.and_return(Hashie::Mash.new(done: true, state: 'Completed'))
+        # _deploy called with Base64 encoded directory contents
+        client.should_receive(:_deploy).with(/^UEsDBBQA.*/, {}).
+            and_return(Hashie::Mash.new(id: '1234'))
+        client.stub(:status).
+            and_return(Hashie::Mash.new(done: true, state: 'Completed'))
       end
 
       let(:path) { File.expand_path('../../../fixtures', __FILE__) }
