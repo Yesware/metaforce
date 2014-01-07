@@ -28,7 +28,8 @@ shared_examples 'a client' do
 
       it 'calls the authentication handler and resends the request' do
         response = double('response')
-        response.stub(:body).and_return(Hashie::Mash.new(:foo_response => {:result => ''}))
+        response.stub(:body).
+            and_return(Hashie::Mash.new(:fooResponse => { :result => '' }))
         client.send(:client).should_receive(:request).once.and_return(response)
         handler.should_receive(:call).and_call_original
         client.send(:request, :foo)

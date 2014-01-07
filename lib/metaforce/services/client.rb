@@ -26,6 +26,23 @@ module Metaforce
         end
       end
 
+      # Public: Retrieves information about the specified sobject type.
+      #
+      # TODO: it is not yet required but we should support describing multiple
+      #   sobjects using a single call.
+      #
+      # Example:
+      #
+      #  client.describe('Contact')
+      #
+      # @param sobject [String] The name of the sobject type to describe.
+      # @return [Hashie::Mash] The result from Salesforce.
+      def describe(sobject)
+        request :describe_s_object do |soap|
+          soap.body = { 'sObjectType' => sobject }
+        end
+      end
+
       # Public: Retrieves layout information for the specified sobject.
       #
       # sobject        - String name of the sobject.

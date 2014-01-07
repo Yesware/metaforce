@@ -5,7 +5,18 @@ describe Metaforce::Services::Client do
 
   it_behaves_like 'a client'
 
-  describe '.describe_layout' do
+  describe '#describe' do
+    before(:each) do
+      savon.expects(:describe_s_object).with('sObjectType' => 'Account').
+          returns(:success)
+    end
+
+    subject { client.describe('Account') }
+
+    it { should be_a Hashie::Mash }
+  end
+
+  describe '#describe_layout' do
     context 'without a record type id' do
       before do
         savon.expects(:describe_layout).with('sObjectType' => 'Account').returns(:success)
@@ -25,7 +36,7 @@ describe Metaforce::Services::Client do
     end
   end
 
-  describe '.send_email' do
+  describe '#send_email' do
     before do
       savon.expects(:send_email).with(:messages => { :to_addresses => "foo@bar.com", :subject => "foo", :plain_text_body => "bar" },
                                       :attributes! => { "ins0:messages" => { "xsi:type" => "ins0:SingleEmailMessage" } }).returns(:success)

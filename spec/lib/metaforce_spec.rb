@@ -8,7 +8,7 @@ describe Metaforce do
     it { should be_a Metaforce::Client }
   end
 
-  describe '#login' do
+  describe '.login' do
     let(:args) { {:username => 'foo', :password => 'foobar', :security_token => 'whizbang'} }
 
     context 'when environment variables are not defined' do
@@ -37,6 +37,22 @@ describe Metaforce do
         Metaforce::Login.any_instance.should_receive(:login)
         described_class.login
       end
+    end
+  end
+
+  describe '.refresh' do
+    let(:args) { { :refresh_token => 'baz' } }
+
+    it 'proxies the refresh call' do
+      mock_refresh = double('Metaforce::Refresh')
+      Metaforce::Refresh.should_receive(:new).with do |*args|
+        options = args.first
+        options.should be_instance_of(HashWithIndifferentAccess)
+        options[:refresh_token].should == 'baz'
+      end.and_return(mock_refresh)
+      mock_refresh.should_receive(:refresh)
+
+      described_class.refresh(args)
     end
   end
 end
