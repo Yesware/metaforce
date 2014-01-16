@@ -34,7 +34,7 @@ module Metaforce
       end.tap { |client| client.http.auth.ssl.verify_mode = :none }
     end
 
-    # Internal: Usernamed passed in from options.
+    # Internal: Username passed in from options.
     def username
       @username
     end

@@ -17,6 +17,7 @@ module Metaforce
     # @option refresh_token [String]
     # @option client_id [String]
     # @option client_secret [String]
+    # @option host [String] Hostname for authentication requests.
     # @option authentication_calls [Proc] A proc that is called with the
     #   response body if the refresh is successful.
     def initialize(options = {})
@@ -58,9 +59,23 @@ module Metaforce
     end
     private :error_message
 
+    # Hostname for authentication requests.
+    # @return [String]
+    def host
+      @options[:host] || Metaforce.configuration.host
+    end
+    private :host
+
+    # URL for authentication requests.
+    # @return [String]
+    def login_url
+      "https://#{host}"
+    end
+    private :login_url
+
     # Faraday connection to use when sending an authentication request.
     def connection
-      @connection ||= Faraday.new('https://login.salesforce.com') do |builder|
+      @connection ||= Faraday.new(login_url) do |builder|
         builder.response :json
         builder.adapter Faraday.default_adapter
       end

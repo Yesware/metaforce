@@ -5,6 +5,11 @@ describe Metaforce do
     let(:api_version) { '29.0' }
     subject { Metaforce.configuration }
 
+    before do
+      Metaforce.configuration.host = nil
+      Metaforce.configuration.api_version = nil
+    end
+
     it { should set_default(:api_version).to(api_version) }
 
     it { should set_default(:host).to('login.salesforce.com') }

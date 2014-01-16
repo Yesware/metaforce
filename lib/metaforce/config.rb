@@ -39,8 +39,7 @@ module Metaforce
     attr_accessor :password
     # The security token to use during login.
     attr_accessor :security_token
-    # Set this to true if you're authenticating with a Sandbox instance.
-    # Defaults to false.
+    # The string hostname to use during authentication requests.
     attr_accessor :host
     # A block that gets called when the session becomes invalid and the
     # client needs to reauthenticate. Passes in the client and the client
