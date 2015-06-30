@@ -92,42 +92,51 @@ client.retrieve_unpackaged(manifest)
 
 * * *
 
-### create(type, metadata={})
+### create_metadata(type, metadata={})
 
 Takes a Symbol type and a Hash of [Metadata Attributes](http://www.salesforce.com/us/developer/docs/api_meta/Content/meta_types_list.htm)
 and returns a `Metaforce::Job::CRUD`.
 
 ```ruby
-client.create(:apex_page, full_name: 'Foobar', content: 'Hello World!')
-  .on_complete { |job| puts "ApexPage created." }
+client.create_metadata(:apex_page, full_name: 'Foobar', content: 'Hello World!')
   .perform
 #=> #<Metaforce::Job::CRUD @id='1234'>
 ```
 
 * * *
 
-### update(type, current\_name metadata={})
+### update_metadata(type, current\_name metadata={})
 
 Takes a Symbol type, the current `full_name` of the resource, and a Hash of
 [Metadata Attributes](http://www.salesforce.com/us/developer/docs/api_meta/Content/meta_types_list.htm)
 and returns a `Metaforce::Job::CRUD`.
 
 ```ruby
-client.update(:apex_page, 'Foobar', content: 'Hello World! Some new content!')
-  .on_complete { |job| puts "ApexPage updated." }
+client.update_metadata(:apex_page, 'Foobar', content: 'Hello World! Some new content!')
   .perform
 #=> #<Metaforce::Job::CRUD @id='1234'>
 ```
 
 * * *
 
-### delete(type, \*args)
+### delete_metadata(type, \*args)
 
 Takes a Symbol type, and the `full_name` of a resource and returns a `Metaforce::Job::CRUD`.
 
 ```ruby
 client.delete(:apex_page, 'Foobar')
-  .on_complete { |job| puts "ApexPage deleted." }
+  .perform
+#=> #<Metaforce::Job::CRUD @id='1234'>
+```
+
+* * *
+
+### read_metadata(type, \*args)
+
+Takes a Symbol type, and the `full_name` of a resource and returns a `Metaforce::Job::CRUD`.
+
+```ruby
+client.read_metadata(:apex_page, 'Foobar')
   .perform
 #=> #<Metaforce::Job::CRUD @id='1234'>
 ```

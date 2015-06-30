@@ -31,7 +31,7 @@ EOL
   s.add_dependency 'faraday'
 
   s.add_development_dependency 'rake'
-  s.add_development_dependency 'rspec'
+  s.add_development_dependency 'rspec', '~> 2.0'
   s.add_development_dependency 'webmock'
   s.add_development_dependency 'savon_spec', '~> 1.3.0'
 end

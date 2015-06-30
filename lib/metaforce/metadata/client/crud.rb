@@ -7,10 +7,13 @@ module Metaforce
         #
         # Examples
         #
-        #   client._create(:apex_page, :full_name => 'TestPage', label: 'Test page', :content => '<apex:page>foobar</apex:page>')
-        def _create(type, metadata={})
+        #   client._create_metadata(:apex_page,
+        #                           :full_name => 'TestPage',
+        #                           :label => 'Test page',
+        #                           :content => '<apex:page>foobar</apex:page>')
+        def _create_metadata(type, metadata={})
           type = type.to_s.camelize
-          request :create do |soap|
+          request :create_metadata do |soap|
             soap.body = {
               :metadata => prepare(metadata)
             }.merge(attributes!(type))
@@ -21,14 +24,14 @@ module Metaforce
         #
         # Examples
         #
-        #   client._delete(:apex_component, 'Component')
-        def _delete(type, *args)
+        #   client._delete_metadata(:apex_component, 'Component')
+        def _delete_metadata(type, *args)
           type = type.to_s.camelize
-          metadata = args.map { |full_name| {:full_name => full_name} }
-          request :delete do |soap|
+          request :delete_metadata do |soap|
             soap.body = {
-              :metadata => metadata
-            }.merge(attributes!(type))
+              :type => type,
+              :full_name => args
+            }
           end
         end
 
@@ -36,30 +39,48 @@ module Metaforce
         #
         # Examples
         #
-        #   client._update(:apex_page, 'OldPage', :full_name => 'TestPage', :label => 'Test page', :content => '<apex:page>hello world</apex:page>')
-        def _update(type, current_name, metadata={})
+        #   client._update_metadata(:apex_page,
+        #                           :full_name => 'TestPage',
+        #                           :label => 'Test page',
+        #                           :content => '<apex:page>hello world</apex:page>')
+        def _update_metadata(type, metadata={})
           type = type.to_s.camelize
-          request :update do |soap|
+          request :update_metadata do |soap|
             soap.body = {
-              :metadata => {
-                :current_name => current_name,
-                :metadata => prepare(metadata),
-                :attributes! => { :metadata => { 'xsi:type' => "ins0:#{type}" } }
-              }
+              :metadata => prepare(metadata)
+            }.merge(attributes!(type))
+          end
+        end
+
+        # Public: Read metadata
+        #
+        # Examples
+        #
+        #   client._read_metadata(:apex_component, 'Component')
+        def _read_metadata(type, *args)
+          type = type.to_s.camelize
+          request :read_metadata do |soap|
+            soap.body = {
+              :type => type,
+              :full_name => args
             }
           end
         end
 
-        def create(*args)
-          Job::CRUD.new(self, :_create, args)
+        def create_metadata(*args)
+          Job::CRUD.new(self, :_create_metadata, args)
         end
 
-        def update(*args)
-          Job::CRUD.new(self, :_update, args)
+        def read_metadata(*args)
+          Job::CRUD.new(self, :_read_metadata, args)
         end
 
-        def delete(*args)
-          Job::CRUD.new(self, :_delete, args)
+        def update_metadata(*args)
+          Job::CRUD.new(self, :_update_metadata, args)
+        end
+
+        def delete_metadata(*args)
+          Job::CRUD.new(self, :_delete_metadata, args)
         end
 
       private

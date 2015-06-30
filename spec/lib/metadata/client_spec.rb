@@ -92,42 +92,120 @@ describe Metaforce::Metadata::Client do
     it { should be_a Metaforce::Job::Retrieve }
   end
 
-  describe '._create' do
+  describe '._create_metadata' do
     before do
-      savon.expects(:create).with(:metadata => [{:full_name => 'component', :label => 'test', :content => "Zm9vYmFy\n"}], :attributes! => {'ins0:metadata' => {'xsi:type' => 'ins0:ApexComponent'}}).returns(:in_progress)
+      savon.expects(:create_metadata).
+          with({
+                 :metadata =>
+                 [
+                   {
+                     :full_name => 'component',
+                     :label => 'test',
+                     :content => "Zm9vYmFy\n"
+                   }
+                 ],
+                 :attributes! =>
+                 {
+                   'ins0:metadata' => { 'xsi:type' => 'ins0:ApexComponent' }
+                 }
+               }).returns(:result)
     end
 
-    subject { client._create(:apex_component, :full_name => 'component', :label => 'test', :content => 'foobar') }
+    subject do
+      client._create_metadata(:apex_component,
+                              :full_name => 'component',
+                              :label => 'test',
+                              :content => 'foobar')
+    end
+
     it { should be_a Hash }
   end
 
-  describe '._delete' do
+  describe '._delete_metadata' do
     context 'with a single name' do
       before do
-        savon.expects(:delete).with(:metadata => [{:full_name => 'component'}], :attributes! => {'ins0:metadata' => {'xsi:type' => 'ins0:ApexComponent'}}).returns(:in_progress)
+        savon.expects(:delete_metadata).with({
+                                               :type => 'ApexComponent',
+                                               :full_name => ['component']
+                                             }).returns(:result)
       end
 
-      subject { client._delete(:apex_component, 'component') }
+      subject { client._delete_metadata(:apex_component, 'component') }
       it { should be_a Hash }
     end
 
     context 'with multiple' do
       before do
-        savon.expects(:delete).with(:metadata => [{:full_name => 'component1'}, {:full_name => 'component2'}], :attributes! => {'ins0:metadata' => {'xsi:type' => 'ins0:ApexComponent'}}).returns(:in_progress)
+        savon.expects(:delete_metadata).with({
+                                               :type => 'ApexComponent',
+                                               :full_name => ['component1', 'component2']
+                                             }).returns(:result)
       end
 
-      subject { client._delete(:apex_component, 'component1', 'component2') }
+      subject { client._delete_metadata(:apex_component, 'component1', 'component2') }
       it { should be_a Hash }
     end
   end
 
-  describe '._update' do
+  describe '._update_metadata' do
     before do
-      savon.expects(:update).with(:metadata => {:current_name => 'old_component', :metadata => [{:full_name => 'component', :label => 'test', :content => "Zm9vYmFy\n"}], :attributes! => {:metadata => {'xsi:type' => 'ins0:ApexComponent'}}}).returns(:in_progress)
+      savon.expects(:update_metadata).
+        with({
+               :metadata =>
+               [
+                 {
+                   :full_name => 'component',
+                   :label => 'test',
+                   :content => "Zm9vYmFy\n"
+                 }
+               ],
+               :attributes! =>
+               {
+                 "ins0:metadata" => {'xsi:type' => 'ins0:ApexComponent'}
+               }
+             }).returns(:result)
     end
 
-    subject { client._update(:apex_component, 'old_component', :full_name => 'component', :label => 'test', :content => 'foobar') }
+    subject do
+      client._update_metadata(:apex_component,
+                              :full_name => 'component',
+                              :label => 'test',
+                              :content => 'foobar')
+    end
+
     it { should be_a Hash }
+  end
+
+  describe '._read_metadata' do
+    before do
+      savon.expects(:read_metadata).with({
+                                           :type => 'CustomField',
+                                           :full_name => ['Lead.Foo_Bar__c']
+                                         }).returns(:result)
+    end
+
+    subject do
+      client._read_metadata(:custom_field, 'Lead.Foo_Bar__c')
+    end
+
+    let(:expected) do
+      {
+        'records' =>
+        {
+          '@xsi:type' => 'CustomField',
+          'externalId' => false,
+          'fullName' => 'Lead.Foo_Bar__c',
+          'label' => 'Foo Bar',
+          'length' => '20',
+          'required' => false,
+          'trackFeedHistory' => false,
+          'type' => 'Text',
+          'unique' => false
+        }
+      }
+    end
+
+    it { should eq expected }
   end
 end
 

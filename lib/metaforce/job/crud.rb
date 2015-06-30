@@ -5,9 +5,10 @@ module Metaforce
       @method, @args = method, args
     end
 
+    # All CRUD operations are synchronous starting with version 31, so this can
+    # just send the method directly to the client
     def perform
-      @id = @client.send(@method, *@args).id
-      super
+      @client.send(@method, *@args)
     end
   end
 end
