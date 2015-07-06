@@ -22,7 +22,12 @@ module Metaforce
           :password => password
         }
       end
-      response.body[:loginResponse][:result]
+
+      # The global override to convert the SOAP XML to camel case breaks the
+      # client options set by callers of this method, so undo it.
+      response.body[:loginResponse][:result].reduce({}) do |hash, (k, v)|
+        hash.merge(k.to_s.underscore.to_sym => v)
+      end
     end
 
   private

@@ -7,6 +7,7 @@ Nori.convert_tags_to do |tag|
 end
 
 require 'hashie'
+require 'active_support/dependencies/autoload'
 require 'active_support/core_ext'
 
 require 'metaforce/version'

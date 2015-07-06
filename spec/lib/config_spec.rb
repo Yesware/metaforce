@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Metaforce do
   describe '.configuration' do
-    let(:api_version) { '29.0' }
+    let(:api_version) { '34.0' }
     subject { Metaforce.configuration }
 
     before do

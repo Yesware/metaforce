@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns="http://soap.sforce.com/2006/04/metadata">
   <soapenv:Body>
-    <deleteResponse>
+    <createMetadataResponse>
       <result>
-        <done>false</done>
-        <id>04sU0000000WNWoIAO</id>
-        <state>InProgress</state>
+        <fullName>Lead.Foo_Bar__c</fullName>
+        <success>true</success>
       </result>
-    </deleteResponse>
+    </createMetadataResponse>
   </soapenv:Body>
 </soapenv:Envelope>
